@@ -1,0 +1,64 @@
+name: 'laravel_portfolio'
+
+services:
+
+    nginx:
+        container_name: nginx
+        image: nginx:alpine
+        volumes:
+            - ./:/var/www
+            - ./docker/nginx/:/etc/nginx/conf.d/
+        networks:
+            - app-network
+        depends_on:
+            - app
+            - postgres
+        ports:
+            - "80:80"
+
+    postgres:
+        container_name: postgres
+        build:
+            context: .
+            dockerfile: docker/postgres/Dockerfile
+        environment:
+            PGUSER: postgres
+            POSTGRES_DB: laravel_portfolio
+            POSTGRES_USER: ${DB_USERNAME}
+            POSTGRES_PASSWORD: ${DB_PASSWORD}
+        healthcheck:
+            test: ['CMD', 'pg_isready']
+            interval: 1s
+            timeout: 5s
+            retries: 5
+        volumes:
+            - pgdata:/data/postgres
+        ports:
+            - "5432:5432"
+        networks:
+            - app-network
+
+    app:
+        container_name: app
+        user: "${USER_ID:-1000}:${GROUP_ID:-1000}"
+        build:
+            context: .
+            dockerfile: docker/php/Dockerfile
+        environment:
+            FPM_USER: www
+            FPM_GROUP: www
+        volumes:
+            - .:/var/www
+            - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+        networks:
+            - app-network
+        ports:
+            - "9000:9000"
+
+networks:
+    app-network:
+        driver: bridge
+
+volumes:
+    pgdata:
+        driver: local
