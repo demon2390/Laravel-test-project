@@ -2,9 +2,9 @@
 
 declare(strict_types = 1);
 
-namespace App\Http\Controllers\Services;
+namespace App\Http\Controllers\Api\V1\Credentials;
 
-class ShowController
+class DeleteController
 {
     public function __invoke()
     {

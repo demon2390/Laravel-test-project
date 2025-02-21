@@ -5,29 +5,31 @@ services:
     nginx:
         container_name: nginx
         image: nginx:alpine
+        restart: always
         volumes:
             - ./:/var/www
             - ./docker/nginx/:/etc/nginx/conf.d/
-        networks:
-            - app-network
         depends_on:
             - app
             - postgres
         ports:
             - "80:80"
+        networks:
+            - app-network
 
     postgres:
         container_name: postgres
         build:
             context: .
             dockerfile: docker/postgres/Dockerfile
+        restart: always
         environment:
             PGUSER: postgres
             POSTGRES_DB: laravel_portfolio
             POSTGRES_USER: ${DB_USERNAME}
             POSTGRES_PASSWORD: ${DB_PASSWORD}
         healthcheck:
-            test: ['CMD', 'pg_isready']
+            test: [ 'CMD', 'pg_isready' ]
             interval: 1s
             timeout: 5s
             retries: 5
@@ -38,12 +40,30 @@ services:
         networks:
             - app-network
 
+    pgadmin:
+        container_name: pgadmin
+        image: dpage/pgadmin4
+        restart: always
+        environment:
+            PGADMIN_DEFAULT_EMAIL: admin@email.example
+            PGADMIN_DEFAULT_PASSWORD: secret
+        volumes:
+            - pgadmin:/var/lib/pgadmin
+        ports:
+            - "8090:80"
+        depends_on:
+            postgres:
+                condition: service_healthy
+        networks:
+            - app-network
+
     app:
         container_name: app
         user: "${USER_ID:-1000}:${GROUP_ID:-1000}"
         build:
             context: .
             dockerfile: docker/php/Dockerfile
+        restart: always
         environment:
             FPM_USER: www
             FPM_GROUP: www
@@ -52,13 +72,42 @@ services:
             - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
         networks:
             - app-network
+
+    redis:
+        container_name: redis
+        image: redis:alpine
+        restart: always
+        healthcheck:
+            test: [ "CMD", "redis-cli", "ping" ]
+            retries: 3
+            timeout: 5s
         ports:
-            - "9000:9000"
+            - "6379:6379"
+        volumes:
+            - cache:/data
+        networks:
+            - app-network
+
+    redisinsight:
+        container_name: redisinsight
+        image: redis/redisinsight:latest
+        restart: always
+        ports:
+            - "5540:5540"
+        volumes:
+            - redisinsight:/data
+        networks:
+            - app-network
 
 networks:
     app-network:
         driver: bridge
 
 volumes:
+    redisinsight:
     pgdata:
+        driver: local
+    pgadmin:
+        driver: local
+    cache:
         driver: local

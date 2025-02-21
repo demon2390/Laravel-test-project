@@ -2,9 +2,9 @@
 
 declare(strict_types = 1);
 
-namespace App\Http\Controllers\Checks;
+namespace App\Http\Controllers\Api\V1\Services;
 
-class DeleteController
+class UpdateController
 {
     public function __invoke()
     {

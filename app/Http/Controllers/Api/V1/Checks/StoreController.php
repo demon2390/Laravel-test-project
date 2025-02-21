@@ -2,9 +2,9 @@
 
 declare(strict_types = 1);
 
-namespace App\Http\Controllers\Checks;
+namespace App\Http\Controllers\Api\V1\Checks;
 
-class IndexController
+class StoreController
 {
     public function __invoke()
     {
