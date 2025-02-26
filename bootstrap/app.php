@@ -1,12 +1,19 @@
 <?php
 
+use App\Http\Middleware\ApiMiddleware;
+use App\Http\Middleware\AuthenticateMiddleware;
 use App\Http\Middleware\EnsureEmailIsVerified;
+use App\Http\Middleware\LoggerMiddleware;
 use App\Http\Middleware\SunsetMiddleware;
+use App\Http\Middleware\XRequestIdMiddleware;
+use App\Http\Responses\V1\MessageResponses;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -17,25 +24,39 @@ return Application::configure(basePath: dirname(__DIR__))
         apiPrefix: '',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        $middleware->statefulApi();
         $middleware->throttleWithRedis();
+        $middleware->validateCsrfTokens(['*']);
 
         $middleware->api(prepend: [
             EnsureFrontendRequestsAreStateful::class,
+            XRequestIdMiddleware::class,
+            LoggerMiddleware::class,
         ]);
 
         $middleware->alias([
             'sunset'   => SunsetMiddleware::class,
             'verified' => EnsureEmailIsVerified::class,
+            'auth'     => AuthenticateMiddleware::class,
+            'api'      => ApiMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->dontReportDuplicates();
 
-        $exceptions->render(function (Throwable $e, Request $request) {
-            $code = $e->getStatusCode() ?: 500;
-            return response()->json([
-                'code'     => $code,
-                'detail'   => $e->getMessage(),
-            ], $code);
+        $exceptions->render(function (NotFoundHttpException $e, Request $request) {
+            env('APP_DEBUG', false) ?: dd($e, $request);
+            return new MessageResponses('Resource not found', Response::HTTP_NOT_FOUND);
         });
-    })->create();
+
+        $exceptions->render(function (Throwable $e, Request $request) {
+            env('APP_DEBUG', false) ?: dd($e, $request);
+            return new MessageResponses(
+                $e->getMessage(),
+                $e instanceof HttpExceptionInterface
+                    ? $e->getStatusCode()
+                    : Response::HTTP_INTERNAL_SERVER_ERROR
+            );
+        });
+    })
+    ->create();

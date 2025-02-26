@@ -36,7 +36,7 @@ services:
         volumes:
             - pgdata:/data/postgres
         ports:
-            - "5432:5432"
+            - "${DB_PORT:-5432}:5432"
         networks:
             - app-network
 
@@ -50,7 +50,7 @@ services:
         volumes:
             - pgadmin:/var/lib/pgadmin
         ports:
-            - "8090:80"
+            - "${PG_ADMIN_PORT:-8090}:80"
         depends_on:
             postgres:
                 condition: service_healthy
@@ -64,12 +64,32 @@ services:
             context: .
             dockerfile: docker/php/Dockerfile
         restart: always
+        depends_on:
+            - postgres
+            - redis
         environment:
             FPM_USER: www
             FPM_GROUP: www
         volumes:
             - .:/var/www
             - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+        networks:
+            - app-network
+
+    supervisor:
+        build:
+            context: .
+            dockerfile: docker/supervisor/Dockerfile
+        container_name: supervisor
+        volumes:
+            - .:/var/www/
+            - ./docker/supervisor/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf
+        depends_on:
+            - app
+            - postgres
+            - redis
+        restart: always
+        command: supervisord -c /etc/supervisor/conf.d/supervisord.conf
         networks:
             - app-network
 
@@ -82,7 +102,7 @@ services:
             retries: 3
             timeout: 5s
         ports:
-            - "6379:6379"
+            - "${REDIS_PORT:-6379}:6379"
         volumes:
             - cache:/data
         networks:
@@ -93,9 +113,21 @@ services:
         image: redis/redisinsight:latest
         restart: always
         ports:
-            - "5540:5540"
+            - "${REDIS_INSIGHT_PORT:-5540}:5540"
         volumes:
             - redisinsight:/data
+        networks:
+            - app-network
+
+    smtp:
+        image: mailhog/mailhog
+        container_name: smtp
+        restart: always
+        ports:
+            - "${MAIL_PORT:-1025}:1025"
+            - "8100:8025"
+        volumes:
+            - smtp:/data
         networks:
             - app-network
 
@@ -110,4 +142,8 @@ volumes:
     pgadmin:
         driver: local
     cache:
+        driver: local
+    supervisor:
+        driver: local
+    smtp:
         driver: local

@@ -7,28 +7,28 @@ use App\Models\User;
 
 class ServicePolicy
 {
-    public function viewAny(User $user): bool
+    public function viewAny(?User $user): bool
     {
         return true;
     }
 
-    public function view(User $user, Service $service): bool
+    public function view(?User $user, Service $service): bool
     {
-        return $user->id === $service->user_id;
+        return $user && $user->id === $service->user_id;
     }
 
-    public function create(User $user): bool
+    public function create(?User $user): bool
     {
-        return $user->hasVerifiedEmail();
+        return $user && $user->hasVerifiedEmail();
     }
 
-    public function update(User $user, Service $service): bool
+    public function update(?User $user, Service $service): bool
     {
-        return $user->id === $service->user_id;
+        return $user && $user->id === $service->user_id;
     }
 
-    public function delete(User $user, Service $service): bool
+    public function delete(?User $user, Service $service): bool
     {
-        return $user->id === $service->user_id;
+        return $user && $user->id === $service->user_id;
     }
 }

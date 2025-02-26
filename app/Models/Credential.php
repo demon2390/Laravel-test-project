@@ -9,11 +9,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property string $id
  * @property string $name
- * @property string $metadata
+ * @property array $metadata
  * @property string $value
  * @property string $user_id
  * @property null|CarbonInterface $created_at
@@ -25,12 +26,12 @@ class Credential extends Model
 {
     use HasFactory;
     use HasUlids;
+    use SoftDeletes;
 
     /** @var array<int,string> */
     protected $fillable = [
         'name',
-        'type',
-        'value',
+        'metadata',
         'user_id',
     ];
 
@@ -56,8 +57,7 @@ class Credential extends Model
     protected function casts(): array
     {
         return [
-            'metadata' => 'json',
-            'value'    => 'encrypted',
+            'metadata' => 'encrypted:json',
         ];
     }
 }

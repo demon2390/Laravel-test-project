@@ -13,8 +13,7 @@ return new class extends Migration
 
             $table->string('name');
 
-            $table->json('metadata')->nullable();
-            $table->text('value');
+            $table->text('metadata')->nullable();
 
             $table
                 ->foreignUlid('user_id')
@@ -23,6 +22,7 @@ return new class extends Migration
                 ->cascadeOnDelete();
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

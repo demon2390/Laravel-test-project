@@ -11,7 +11,8 @@ return new class extends Migration {
             $table->ulid('id')->primary();
 
             $table->string('name');
-            $table->string('url')->unique();
+            $table->string('url');
+            $table->unique(['url','user_id','deleted_at']);
 
             $table
                 ->foreignUlid('user_id')
@@ -20,6 +21,7 @@ return new class extends Migration {
                 ->cascadeOnDelete();
 
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

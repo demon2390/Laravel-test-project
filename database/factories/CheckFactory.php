@@ -24,11 +24,11 @@ class CheckFactory extends Factory
         return [
             'name'          => $this->faker->sentence(),
             'path'          => $this->faker->filePath(),
-            'method'        => 'GET',
+            'method'        => $this->faker->boolean(80) ? 'GET' : "POST",
             'body'          => null,
             'headers'       => null,
             'parameters'    => null,
-            'credential_id' => $this->faker->boolean()
+            'credential_id' => $this->faker->boolean(20)
                 ? Credential::factory()
                 : null,
             'service_id'    => Service::factory(),
