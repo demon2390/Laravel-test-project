@@ -25,10 +25,6 @@ class ServiceController
 {
     public function index(Request $request): JsonResponse
     {
-        if (! Gate::allows('viewAny', Service::class)) {
-            abort(Response::HTTP_FORBIDDEN, __('v1.failure.view', ['resource' => 'services']));
-        }
-
         $cachedServices = Cache::rememberForever(
             key: CacheKeys::USER_SERVICES->value . '_' . auth()->id(),
             callback: fn() => Service::query()
@@ -37,7 +33,9 @@ class ServiceController
         );
 
         if ($cachedServices->isNotEmpty()) {
-            $services = QueryBuilder::for($cachedServices->toQuery())
+            $services = QueryBuilder::for(
+                subject: $cachedServices->toQuery()
+            )
                 ->allowedIncludes(['checks'])
                 ->allowedFilters(['url'])
                 ->getEloquentBuilder()
@@ -52,10 +50,6 @@ class ServiceController
 
     public function store(StoreRequest $request): MessageResponses
     {
-        if (! Gate::allows('create', Service::class)) {
-            abort(Response::HTTP_FORBIDDEN, __('v1.failure.verify', ['resource' => 'service']));
-        }
-
         CreateServiceJob::dispatch(array_merge(
             $request->validated(),
             [
@@ -69,32 +63,23 @@ class ServiceController
         );
     }
 
-    public function show(Request $request, string $ulid): ServiceResource|MessageResponses
+    public function show(Request $request, Service $service): ServiceResource
     {
-        $service = Cache::rememberForever(
-            key: CacheKeys::SERVICE->value . '_' . $ulid,
-            callback: fn() => Service::query()->findOrFail($ulid),
-        );
+        Cache::flush();
 
-        if (! Gate::allows('view', $service)) {
-            return new MessageResponses(
-                __('v1.failure.policy', ['resource' => 'service', 'action' => 'view']),
-                Response::HTTP_FORBIDDEN,
-            );
-        }
+        $service = QueryBuilder::for(
+            subject: Service::query()->where('id', $service->id)
+        )
+            ->allowedIncludes(['checks'])
+            ->allowedFilters(['url'])
+            ->getEloquentBuilder()
+            ->first();
 
         return new ServiceResource($service);
     }
 
     public function update(StoreRequest $request, Service $service): MessageResponses
     {
-        if (! Gate::allows('update', $service)) {
-            return new MessageResponses(
-                __('v1.failure.policy', ['resource' => 'service', 'action' => 'updated']),
-                Response::HTTP_FORBIDDEN,
-            );
-        }
-
         UpdateServiceJob::dispatch($request->validated(), $service);
 
         return new MessageResponses(
@@ -105,13 +90,6 @@ class ServiceController
 
     public function delete(Request $request, Service $service): MessageResponses
     {
-        if (! Gate::allows('delete', $service)) {
-            return new MessageResponses(
-                __('v1.failure.policy', ['resource' => 'service', 'action' => 'delete']),
-                Response::HTTP_FORBIDDEN,
-            );
-        }
-
         DeleteServiceJob::dispatch($service);
 
         return new MessageResponses(
