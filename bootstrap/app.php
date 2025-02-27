@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Middleware\ApiMiddleware;
+use App\Http\Middleware\ApiHeadersMiddleware;
 use App\Http\Middleware\AuthenticateMiddleware;
 use App\Http\Middleware\EnsureEmailIsVerified;
 use App\Http\Middleware\LoggerMiddleware;
@@ -18,10 +18,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
+        web: __DIR__ . '/../routes/web/routes.php',
         api: __DIR__ . '/../routes/api/routes.php',
         commands: __DIR__ . '/../routes/console/routes.php',
         health: '/up',
-        apiPrefix: '',
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->statefulApi();
@@ -38,7 +38,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'sunset'   => SunsetMiddleware::class,
             'verified' => EnsureEmailIsVerified::class,
             'auth'     => AuthenticateMiddleware::class,
-            'api'      => ApiMiddleware::class,
+            'headers'  => ApiHeadersMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
@@ -46,11 +46,13 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $exceptions->render(function (NotFoundHttpException $e, Request $request) {
             env('APP_DEBUG', false) ?: dd($e, $request);
+
             return new MessageResponses('Resource not found', Response::HTTP_NOT_FOUND);
         });
 
         $exceptions->render(function (Throwable $e, Request $request) {
             env('APP_DEBUG', false) ?: dd($e, $request);
+
             return new MessageResponses(
                 $e->getMessage(),
                 $e instanceof HttpExceptionInterface

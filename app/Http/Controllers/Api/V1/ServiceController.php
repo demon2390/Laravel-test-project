@@ -4,42 +4,47 @@ declare(strict_types = 1);
 
 namespace App\Http\Controllers\Api\V1;
 
-use App\Enums\CacheKeys;
 use App\Http\Requests\V1\Services\StoreRequest;
 use App\Http\Resources\Api\V1\ServiceResource;
 use App\Http\Responses\V1\MessageResponses;
-use App\Jobs\Services\CreateServiceJob;
-use App\Jobs\Services\DeleteServiceJob;
-use App\Jobs\Services\UpdateServiceJob;
+use App\Jobs\Services\{CreateServiceJob, DeleteServiceJob, UpdateServiceJob};
 use App\Models\Service;
-use App\Models\User;
+use App\Repositories\Services\Interfaces\ServiceRepositoryInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Gate;
-use Spatie\QueryBuilder\QueryBuilder;
+use Spatie\QueryBuilder\{AllowedFilter, AllowedSort, QueryBuilder};
 use Symfony\Component\HttpFoundation\Response;
 
-class ServiceController
+readonly class ServiceController
 {
+    public function __construct(private ServiceRepositoryInterface $repository)
+    {
+    }
+
     public function index(Request $request): JsonResponse
     {
-        $cachedServices = Cache::rememberForever(
-            key: CacheKeys::USER_SERVICES->value . '_' . auth()->id(),
-            callback: fn() => Service::query()
-                ->where('user_id', auth()->id())
-                ->get(),
-        );
+        $cachedServices = $this->repository->getAllUserServices();
 
         if ($cachedServices->isNotEmpty()) {
             $services = QueryBuilder::for(
                 subject: $cachedServices->toQuery()
             )
                 ->allowedIncludes(['checks'])
-                ->allowedFilters(['url'])
+                ->allowedFilters([
+                    'url',
+                    'name',
+                    AllowedFilter::callback('has_checks', fn(Builder $query) => $query->whereHas(relation: 'checks', operator: '>', count: 0)),
+                ])
+                ->allowedSorts([
+                    'name',
+                    'url',
+                    AllowedSort::field('created', 'created_at'),
+                    AllowedSort::field('updated', 'updated_at'),
+                ])
+                ->defaultSort('-updated_at')
                 ->getEloquentBuilder()
-                ->orderByDesc('created_at')
                 ->cursorPaginate(config('app.pagination.default'));
         } else {
             $services = new Collection;
@@ -50,6 +55,18 @@ class ServiceController
 
     public function store(StoreRequest $request): MessageResponses
     {
+        $cachedServices = $this->repository->getAllUserServices();
+        if ($cachedServices
+            ->where('url', $request->string('url'))
+            ->whereNull('deleted_at')
+            ->isNotEmpty()
+        ) {
+            return new MessageResponses(
+                __('v1.failure.duplicate', ['resource' => 'service', 'action' => 'created']),
+                Response::HTTP_FORBIDDEN,
+            );
+        }
+
         CreateServiceJob::dispatch(array_merge(
             $request->validated(),
             [
@@ -65,13 +82,10 @@ class ServiceController
 
     public function show(Request $request, Service $service): ServiceResource
     {
-        Cache::flush();
-
         $service = QueryBuilder::for(
             subject: Service::query()->where('id', $service->id)
         )
             ->allowedIncludes(['checks'])
-            ->allowedFilters(['url'])
             ->getEloquentBuilder()
             ->first();
 
@@ -80,6 +94,18 @@ class ServiceController
 
     public function update(StoreRequest $request, Service $service): MessageResponses
     {
+        $cachedServices = $this->repository->getAllUserServices();
+        if ($cachedServices
+            ->where('url', $request->string('url'))
+            ->whereNull('deleted_at')
+            ->isNotEmpty()
+        ) {
+            return new MessageResponses(
+                __('v1.failure.duplicate', ['resource' => 'service', 'action' => 'created']),
+                Response::HTTP_FORBIDDEN,
+            );
+        }
+
         UpdateServiceJob::dispatch($request->validated(), $service);
 
         return new MessageResponses(

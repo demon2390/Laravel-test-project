@@ -1,8 +1,8 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class extends Migration {
     public function up(): void
@@ -12,7 +12,7 @@ return new class extends Migration {
 
             $table->string('name');
             $table->string('url');
-            $table->unique(['url','user_id','deleted_at']);
+            $table->uniqueIndex(['url', 'user_id', 'deleted_at'])->nullsNotDistinct();
 
             $table
                 ->foreignUlid('user_id')
