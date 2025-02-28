@@ -23,7 +23,7 @@ class ApiHeadersMiddleware
 
         // Set response headers
         $response->headers->set('Accept', 'application/json');
-        $response->headers->set('Content-Type', 'application/json');
+        $response->headers->set('Content-Type', 'application/vnd.api+json');
 
         $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->headers->set('Referrer-Policy', 'no-referrer-when-downgrade');

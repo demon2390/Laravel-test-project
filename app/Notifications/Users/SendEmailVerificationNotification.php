@@ -7,6 +7,7 @@ use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Support\HtmlString;
 
 class SendEmailVerificationNotification extends VerifyEmail implements ShouldQueue
 {
@@ -27,7 +28,7 @@ class SendEmailVerificationNotification extends VerifyEmail implements ShouldQue
 
         return (new MailMessage)
             ->subject('Verify Email Address')
-            ->line("Your Bearer API token is {$this->token}")
+            ->line(new HtmlString("Your Bearer API token is <br><b>Bearer {$this->token}<b>"))
             ->line('Please click the button below to verify your email address.')
             ->action('Verify Email Address', $verificationUrl)
             ->line('If you did not create an account, no further action is required.');

@@ -7,7 +7,7 @@ use App\Models\Report;
 use App\Models\Service;
 use App\Models\User;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -19,6 +19,8 @@ class DatabaseSeeder extends Seeder
                 'name'  => 'Test User',
                 'email' => 'example@email.test',
             ]);
+
+        event(new Registered($user));
 
         $service = Service::factory()
             ->for($user)

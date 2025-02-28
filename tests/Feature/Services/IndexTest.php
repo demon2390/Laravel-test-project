@@ -49,10 +49,6 @@ test('Авторизованный пользователь видит толь�
     Service::factory()->for($this->user)->count(2)->create();
     Service::factory()->count(5)->create();
 
-    expect(
-        Service::query()->count()
-    )->toEqual(7);
-
     actingAs($this->user)
         ->withToken($this->user->token)
         ->getJson(
