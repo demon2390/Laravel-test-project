@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\Services\StoreRequest;
 use App\Http\Resources\Api\V1\ServiceResource;
 use App\Http\Responses\V1\MessageResponses;
@@ -17,9 +18,9 @@ use Illuminate\Support\Collection;
 use Spatie\QueryBuilder\{AllowedFilter, AllowedSort, QueryBuilder};
 use Symfony\Component\HttpFoundation\Response;
 
-readonly class ServiceController
+class ServiceController extends Controller
 {
-    public function __construct(private ServiceRepositoryInterface $repository)
+    public function __construct(private readonly ServiceRepositoryInterface $repository)
     {
     }
 
