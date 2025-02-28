@@ -9,13 +9,9 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('headers')->group(static function (): void {
-    Route::get('/', static function () {
-        return [
-            'Laravel' => app()->version(),
-        ];
-    })->middleware('sunset:' . now()->addYear());
+Route::get('/', fn() => view('welcome', ['base_url' => env('APP_URL', '/')]));
 
+Route::middleware('headers')->group(static function (): void {
     Route::post('/register', [RegisteredUserController::class, 'store'])
         ->middleware('throttle:auth')
         ->name('register');

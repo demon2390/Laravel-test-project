@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
         Check::factory()
             ->for($service)
             ->create([
-                'name'    => 'root check',
+                'name'    => 'Google main page',
                 'path'    => '/',
                 'method'  => 'get',
                 'headers' => [
@@ -40,13 +40,13 @@ class DatabaseSeeder extends Seeder
 
         // and others
         User::factory()->has(
-            Service::factory()->count(3)->has(
-                Check::factory()->count(3)->has(
-                    Report::factory()->count(3)
+            Service::factory()->count(2)->has(
+                Check::factory()->count(2)->has(
+                    Report::factory()->count(2)
                 )
             )
         )
-            ->count(3)
+            ->count(2)
             ->create();
     }
 }
