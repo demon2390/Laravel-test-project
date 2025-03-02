@@ -5,7 +5,7 @@ declare(strict_types = 1);
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\V1\Services\StoreRequest;
+use App\Http\Requests\V1\ServiceFormRequest;
 use App\Http\Resources\Api\V1\ServiceResource;
 use App\Http\Responses\V1\MessageResponses;
 use App\Jobs\Services\{CreateServiceJob, DeleteServiceJob, UpdateServiceJob};
@@ -54,26 +54,9 @@ class ServiceController extends Controller
         return ServiceResource::collection($services)->toResponse($request);
     }
 
-    public function store(StoreRequest $request): MessageResponses
+    public function store(ServiceFormRequest $request): MessageResponses
     {
-        $cachedServices = $this->repository->getAllUserServices();
-        if ($cachedServices
-            ->where('url', $request->string('url'))
-            ->whereNull('deleted_at')
-            ->isNotEmpty()
-        ) {
-            return new MessageResponses(
-                __('v1.failure.duplicate', ['resource' => 'service', 'action' => 'created']),
-                Response::HTTP_FORBIDDEN,
-            );
-        }
-
-        CreateServiceJob::dispatch(array_merge(
-            $request->validated(),
-            [
-                'user_id' => auth()->id(),
-            ]
-        ));
+        CreateServiceJob::dispatch($request->merge(['user_id' => auth()->id()])->toArray());
 
         return new MessageResponses(
             __('v1.success.accept', ['resource' => 'service', 'action' => 'created']),
@@ -93,20 +76,8 @@ class ServiceController extends Controller
         return new ServiceResource($service);
     }
 
-    public function update(StoreRequest $request, Service $service): MessageResponses
+    public function update(ServiceFormRequest $request, Service $service): MessageResponses
     {
-        $cachedServices = $this->repository->getAllUserServices();
-        if ($cachedServices
-            ->where('url', $request->string('url'))
-            ->whereNull('deleted_at')
-            ->isNotEmpty()
-        ) {
-            return new MessageResponses(
-                __('v1.failure.duplicate', ['resource' => 'service', 'action' => 'created']),
-                Response::HTTP_FORBIDDEN,
-            );
-        }
-
         UpdateServiceJob::dispatch($request->validated(), $service);
 
         return new MessageResponses(

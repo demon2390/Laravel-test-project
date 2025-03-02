@@ -22,6 +22,13 @@ class DatabaseSeeder extends Seeder
 
         event(new Registered($user));
 
+        Service::factory()
+            ->for($user)
+            ->create([
+                'name' => 'Localhost',
+                'url'  => 'http://localhost/',
+            ]);
+
         $service = Service::factory()
             ->for($user)
             ->create([
