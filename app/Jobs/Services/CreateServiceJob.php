@@ -14,6 +14,7 @@ class CreateServiceJob implements ShouldQueue
 {
     use Queueable;
 
+    /** @param  array<string|mixed>  $data */
     public function __construct(
         public readonly array $data
     ) {

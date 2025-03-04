@@ -10,8 +10,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 readonly class MessageResponses implements Responsable
 {
+    /**
+     * @param  array<int|string,mixed>|string|null  $message
+     * @param  int  $status
+     */
     public function __construct(
-        private string $message,
+        private array|string|null $message,
         private int $status = Response::HTTP_OK,
     ) {
     }

@@ -6,19 +6,26 @@ namespace App\Repositories\Services;
 
 use App\Models\Service;
 use App\Repositories\Services\Interfaces\ServiceRepositoryInterface;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Contracts\Pagination\CursorPaginator;
+use Illuminate\Support\Facades\Auth;
 
-class ServiceRepository implements ServiceRepositoryInterface
+final readonly class ServiceRepository implements ServiceRepositoryInterface
 {
-    private Service $model;
-
-    public function __construct(Service $model)
+    public function __construct(private Service $model)
     {
-        $this->model = $model;
     }
 
-    public function getAllUserServices(): Collection
+    public function getAllUserServices(): CursorPaginator
     {
-        return $this->model->newQuery()->where('user_id', auth()->id())->get();
+        return $this->model->newQuery()
+            ->where('user_id', Auth::id())
+            ->cursorPaginate(20);
+    }
+
+    public function findService(string $id): Service
+    {
+        return $this->model->newQuery()
+            ->where('user_id', Auth::id())
+            ->findOrFail($id);
     }
 }

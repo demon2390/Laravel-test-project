@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Observers\ReportObserver;
 use Carbon\CarbonInterface;
+use Database\Factories\ReportFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string $url
  * @property string $content_type
  * @property int $status_code
- * @property null|array $data
+ * @property null|array<string,mixed> $data
  * @property Check $check
  * @property CarbonInterface $started_at
  * @property CarbonInterface $finished_at
@@ -23,6 +24,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[ObservedBy(classes: ReportObserver::class)]
 class Report extends Model
 {
+    /** @use HasFactory<ReportFactory> */
     use HasFactory;
     use HasUlids;
 
@@ -37,7 +39,7 @@ class Report extends Model
         'finished_at',
     ];
 
-    /** @return BelongsTo<Check> */
+    /** @return BelongsTo<Check, $this> */
     public function check(): BelongsTo
     {
         return $this->belongsTo(

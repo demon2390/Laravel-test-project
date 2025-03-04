@@ -1,8 +1,9 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
-use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration {
     public function up(): void
@@ -12,7 +13,6 @@ return new class extends Migration {
 
             $table->string('name');
             $table->string('url');
-            $table->uniqueIndex(['url', 'user_id', 'deleted_at'])->nullsNotDistinct();
 
             $table
                 ->foreignUlid('user_id')
@@ -23,6 +23,8 @@ return new class extends Migration {
             $table->timestamps();
             $table->softDeletes();
         });
+
+        DB::statement('CREATE UNIQUE INDEX url_user_id_deleted_at ON services (url, user_id, deleted_at) WHERE deleted_at IS NOT NULL');
     }
 
     public function down(): void

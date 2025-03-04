@@ -8,7 +8,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 
@@ -38,10 +37,10 @@ class NewPasswordController extends Controller
 
         if ($status != Password::PASSWORD_RESET) {
             throw ValidationException::withMessages([
-                'email' => [__($status)],
+                'email' => [__($status)], // @phpstan-ignore-line
             ]);
         }
 
-        return response()->json(['status' => __($status)]);
+        return response()->json(['status' => __($status)]); // @phpstan-ignore-line
     }
 }

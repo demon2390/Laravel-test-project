@@ -4,6 +4,7 @@ namespace App\Models;
 
 //use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Carbon\CarbonInterface;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -22,12 +23,14 @@ use Laravel\Sanctum\HasApiTokens;
  * @property null|CarbonInterface $email_verified_at
  * @property null|CarbonInterface $created_at
  * @property null|CarbonInterface $updated_at
- * @property Collection<Service> $services
- * @property Collection<Credential> $credentials
+ * @property Collection<int,Service> $services
+ * @property Collection<int,Credential> $credentials
  */
 class User extends Authenticatable
 {
     use HasApiTokens;
+
+    /** @use HasFactory<UserFactory> */
     use HasFactory;
     use Notifiable;
     use HasUlids;
@@ -48,7 +51,7 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    /** @return HasMany<Service> */
+    /** @return HasMany<Service, $this> */
     public function services(): HasMany
     {
         return $this->hasMany(
@@ -57,7 +60,7 @@ class User extends Authenticatable
         );
     }
 
-    /** @return HasMany<Credential> */
+    /** @return HasMany<Credential, $this> */
     public function credentials(): HasMany
     {
         return $this->hasMany(

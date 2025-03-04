@@ -16,9 +16,10 @@ class VerifyEmailController extends Controller
      */
     public function __invoke(EmailVerificationRequest $request): JsonResponse
     {
+        /** @var User $user */
         $user = User::query()->findOrFail($request->route('id'));
 
-        if (! hash_equals(sha1($user->getEmailForVerification()), (string) $request->route('hash'))) {
+        if (! hash_equals(sha1($user->getEmailForVerification()), $request->route('hash'))) { // @phpstan-ignore-line
             return response()->json([
                 'message' => 'Verification failed',
             ], Response::HTTP_NOT_ACCEPTABLE);
@@ -31,7 +32,7 @@ class VerifyEmailController extends Controller
         }
 
         if ($user->markEmailAsVerified()) {
-            event(new Verified(request()->user()));
+            event(new Verified($request->user())); // @phpstan-ignore-line
         }
 
         return response()->json([

@@ -20,7 +20,7 @@
                 </div>
                 <div class="form-group">
                     <label for="exampleInputEmail1">Confirm password</label>
-                    <input type="password" name="password.confirmation" class="form-control" required="required">
+                    <input type="password" name="password_confirmation" class="form-control" required="required">
                 </div>
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>

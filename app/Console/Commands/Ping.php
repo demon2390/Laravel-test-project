@@ -16,7 +16,7 @@ use function Laravel\Prompts\{info};
 )]
 class Ping extends Command
 {
-    public function handle()
+    public function handle(): int
     {
         info("Starting to ping services...");
 

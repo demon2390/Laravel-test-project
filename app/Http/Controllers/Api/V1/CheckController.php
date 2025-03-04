@@ -9,27 +9,27 @@ use Illuminate\Http\Request;
 
 class CheckController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): void
     {
         // todo check index controller with observer, cache and resource
     }
 
-    public function store(Request $request)
+    public function store(Request $request): void
     {
         // todo check store controller with observer, cache and resource
     }
 
-    public function show(Request $request)
+    public function show(Request $request): void
     {
         // todo check show controller with observer, cache and resource
     }
 
-    public function update(Request $request)
+    public function update(Request $request): void
     {
         // todo check update controller with observer, cache and resource
     }
 
-    public function delete(Request $request)
+    public function delete(Request $request): void
     {
         // todo check delete controller with observer, cache and resource
     }

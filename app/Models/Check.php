@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\CarbonInterface;
+use Database\Factories\CheckFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,19 +18,20 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $path
  * @property string $method
  * @property string $user_id
- * @property null|object $body
- * @property null|array $headers
- * @property null|array $parameters
+ * @property null|array<string,mixed> $body
+ * @property null|array<string,mixed> $headers
+ * @property null|array<string,mixed> $parameters
  * @property null|string $credential_id
  * @property string $service_id
  * @property null|CarbonInterface $created_at
  * @property null|CarbonInterface $updated_at
  * @property null|Credential $credential
  * @property Service $service
- * @property Collection<Report> $report
+ * @property Collection<int,Report> $reports
  */
 class Check extends Model
 {
+    /** @use HasFactory<CheckFactory> */
     use HasFactory;
     use HasUlids;
     use SoftDeletes;
@@ -49,7 +51,7 @@ class Check extends Model
         'service_id',
     ];
 
-    /** @return BelongsTo<Credential> */
+    /** @return BelongsTo<Credential, $this> */
     public function credential(): BelongsTo
     {
         return $this->belongsTo(
@@ -58,7 +60,7 @@ class Check extends Model
         );
     }
 
-    /** @return BelongsTo<Service> */
+    /** @return BelongsTo<Service, $this> */
     public function service(): BelongsTo
     {
         return $this->belongsTo(
@@ -67,7 +69,7 @@ class Check extends Model
         );
     }
 
-    /** @return HasMany<Report> */
+    /** @return HasMany<Report, $this> */
     public function reports(): HasMany
     {
         return $this->hasMany(

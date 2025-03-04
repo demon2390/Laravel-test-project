@@ -6,12 +6,13 @@ namespace App\Http\Resources\Api\V1;
 
 use App\Models\Check;
 use Illuminate\Http\Request;
-use TiMacDonald\JsonApi\JsonApiResource;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 /** @property Check $resource */
-class CheckResource extends JsonApiResource
+class CheckResource extends JsonResource
 {
-    public function toAttributes(Request $request): array
+    /** @return array<string,string> */
+    public function toArray(Request $request): array
     {
         return [
             'name' => $this->resource->name,

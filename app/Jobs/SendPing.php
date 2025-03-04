@@ -20,6 +20,9 @@ class SendPing implements ShouldQueue
     ) {
     }
 
+    /**
+     * @throws \JsonException
+     */
     public function handle(DatabaseManager $database): void
     {
         $start = now();
@@ -41,7 +44,7 @@ class SendPing implements ShouldQueue
         }
 
         if ($this->check->body) {
-            $request->withBody($this->check->body);
+            $request->withBody(json_encode($this->check->body, JSON_THROW_ON_ERROR));
         }
 
         try {
@@ -53,16 +56,20 @@ class SendPing implements ShouldQueue
                 ]
             );
 
-            $stats = $response->transferStats->getHandlerStats();
 
-            $url = Arr::pull($stats, 'url');
-            $contentType = Arr::pull($stats, 'content_type');
-            $httpCode = Arr::pull($stats, 'http_code');
+            $stats = $response->transferStats;
+            if ($stats) {
+                $stats = $stats->getHandlerStats();
+
+                $url = Arr::pull($stats, 'url');
+                $contentType = Arr::pull($stats, 'content_type');
+                $httpCode = Arr::pull($stats, 'http_code');
+            }
 
             $database->transaction(fn() => $this->check->reports()->create([
-                'url'          => $url,
-                'content_type' => $contentType,
-                'http_code'    => $httpCode,
+                'url'          => $url ?? null,
+                'content_type' => $contentType ?? null,
+                'http_code'    => $httpCode ?? null,
                 'data'         => $stats,
                 'started_at'   => $start,
                 'finished_at'  => now(),

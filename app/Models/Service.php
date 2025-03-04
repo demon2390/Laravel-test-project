@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Observers\ServiceObserver;
 use Carbon\CarbonInterface;
+use Database\Factories\ServiceFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
@@ -23,11 +24,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property null|CarbonInterface $created_at
  * @property null|CarbonInterface $updated_at
  * @property User $user
- * @property Collection<Check> $checks
+ * @property Collection<int,Check> $checks
  */
 #[ObservedBy(classes: ServiceObserver::class)]
 class Service extends Model
 {
+    /** @use HasFactory<ServiceFactory> */
     use HasFactory;
     use HasUlids;
     use SoftDeletes;
@@ -39,7 +41,7 @@ class Service extends Model
         'user_id',
     ];
 
-    /** @return BelongsTo<User> */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(
@@ -48,7 +50,7 @@ class Service extends Model
         );
     }
 
-    /** @return HasMany<Check> */
+    /** @return HasMany<Check, $this> */
     public function checks(): HasMany
     {
         return $this->hasMany(

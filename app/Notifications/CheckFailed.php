@@ -17,6 +17,7 @@ class CheckFailed extends Notification implements ShouldQueue
     ) {
     }
 
+    /** @return array<int,string> */
     public function via(object $notifiable): array
     {
         return ['mail'];
@@ -31,6 +32,7 @@ class CheckFailed extends Notification implements ShouldQueue
             ->line('Thank you for using our application!');
     }
 
+    /** @return array<string,string> */
     public function toArray(object $notifiable): array
     {
         return [

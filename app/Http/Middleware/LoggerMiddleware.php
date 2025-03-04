@@ -6,6 +6,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
@@ -42,7 +43,7 @@ class LoggerMiddleware
         $data['response'] = $response->getContent();
 
         $log = new Logger('stack');
-        $path = "logs/" . now()->year . "/" . now()->month . "/" . now()->day . "/" . Str::lower(Str::replace(['|', ' '], '_', $auth)) . ".log";
+        $path = "logs/" . now()->year . "/" . now()->month . "/" . now()->day . "/" . ($request->ip() ?: '') . ".log";
         $log->pushHandler(new StreamHandler(storage_path($path)));
         $log->info('', $data);
 

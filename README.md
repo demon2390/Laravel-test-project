@@ -14,16 +14,18 @@
 - [x] Поднять в докере БД Postgres и Pgadmin для администрирования
 - [x] Поднять в докере Redis и GUI RedisInsight
 - [x] Поднять в докере MailHog для писем
+- [x] Статанализ (Larastan)
 
-- Методы контроллеров
+- Реализованы методы контроллеров
     - [x] Services
     - [ ] Checks
     - [ ] Credentials
-- Добавить репозитории
+- Добавлен паттерн репозитории (с декоратором кеш)
     - [x] Services
     - [ ] Checks
     - [ ] Credentials
-- Тестирование
+- Тестирование (убрать фабрики и использовать собственное API)
+    - [x] Пользователь (регистрация, валидация, сброс пароля)
     - [ ] Services
         - [x] index
         - [ ] Store
@@ -31,17 +33,7 @@
         - [ ] Update
         - [ ] Delete
     - [ ] Checks
-        - [ ] index
-        - [ ] Store
-        - [ ] Show
-        - [ ] Update
-        - [ ] Delete
     - [ ] Credentials
-        - [ ] index
-        - [ ] Store
-        - [ ] Show
-        - [ ] Update
-        - [ ] Delete
 - [ ] Сделать документацию API
 
 ## Что можно улучшить

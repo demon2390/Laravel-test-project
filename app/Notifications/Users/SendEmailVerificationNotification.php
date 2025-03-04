@@ -33,12 +33,4 @@ class SendEmailVerificationNotification extends VerifyEmail implements ShouldQue
             ->action('Verify Email Address', $verificationUrl)
             ->line('If you did not create an account, no further action is required.');
     }
-
-    public function toArray(object $notifiable): array
-    {
-        return [
-            "token"            => "Your Bearer API token is {$notifiable->token}",
-            "verification_url" => $notifiable->verificationUrl,
-        ];
-    }
 }

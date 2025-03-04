@@ -45,14 +45,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->dontReportDuplicates();
 
         $exceptions->render(function (NotFoundHttpException $e, Request $request) {
-            env('APP_DEBUG', false) ?: dd($e, $request);
-
             return new MessageResponses('Resource not found', Response::HTTP_NOT_FOUND);
         });
 
         $exceptions->render(function (Throwable $e, Request $request) {
-            env('APP_DEBUG', false) ?: dd($e, $request);
-
             return new MessageResponses(
                 $e->getMessage(),
                 $e instanceof HttpExceptionInterface

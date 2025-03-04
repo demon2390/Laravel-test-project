@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Carbon\CarbonInterface;
+use Database\Factories\CredentialFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -14,16 +15,16 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @property string $id
  * @property string $name
- * @property array $metadata
- * @property string $value
+ * @property array<string,mixed> $metadata
  * @property string $user_id
  * @property null|CarbonInterface $created_at
  * @property null|CarbonInterface $updated_at
  * @property User $user
- * @property Collection<Check> $checks
+ * @property Collection<int,Check> $checks
  */
 class Credential extends Model
 {
+    /** @use HasFactory<CredentialFactory> */
     use HasFactory;
     use HasUlids;
     use SoftDeletes;
@@ -35,7 +36,7 @@ class Credential extends Model
         'user_id',
     ];
 
-    /** @return BelongsTo<User> */
+    /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(
@@ -44,7 +45,7 @@ class Credential extends Model
         );
     }
 
-    /** @return HasMany<Check> */
+    /** @return HasMany<Check, $this> */
     public function checks(): HasMany
     {
         return $this->hasMany(

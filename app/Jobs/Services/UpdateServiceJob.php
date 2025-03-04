@@ -14,6 +14,10 @@ class UpdateServiceJob implements ShouldQueue
 {
     use Queueable;
 
+    /**
+     * @param  array<string,mixed>  $data
+     * @param  Service  $service
+     */
     public function __construct(
         public readonly array $data,
         public readonly Service $service,

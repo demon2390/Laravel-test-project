@@ -1,40 +1,57 @@
 <?php
 
 use App\Models\User;
-use Illuminate\Auth\Events\Verified;
-use Illuminate\Support\Facades\Event;
+use App\Notifications\Users\SendEmailVerificationNotification;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
 
-test('email can be verified', function () {
-    $user = User::factory()->unverified()->create();
+beforeEach(function (): void {
+    Notification::fake();
 
-    Event::fake();
+    $email = 'testemail2@testemail2.testemail';
 
-    $verificationUrl = URL::temporarySignedRoute(
-        'verification.verify',
-        now()->addMinutes(60),
-        ['id' => $user->id, 'hash' => sha1($user->email)]
-    );
+    $this->post('/register', [
+        'name'                  => 'Test User',
+        'email'                 => $email,
+        'password'              => 'password',
+        'password_confirmation' => 'password',
+    ]);
 
-    $response = $this->actingAs($user)->get($verificationUrl);
-
-    Event::assertDispatched(Verified::class);
-    expect($user->fresh()->hasVerifiedEmail())->toBeTrue();
-
-    $response->assertStatus(201);
-//    $response->assertRedirect(config('app.frontend_url').'/dashboard?verified=1');
+    $this->user = User::query()->firstWhere('email', $email);
 });
 
-test('email is not verified with invalid hash', function () {
-    $user = User::factory()->unverified()->create();
+test('Электронное письмо отправляется для подтверждения email', function () {
+    Notification::assertSentTo($this->user, SendEmailVerificationNotification::class);
+});
+
+test('Пользователь может верифицировать email', function () {
+    expect(is_null($this->user->id))->toBeFalse();
 
     $verificationUrl = URL::temporarySignedRoute(
         'verification.verify',
         now()->addMinutes(60),
-        ['id' => $user->id, 'hash' => sha1('wrong-email')]
+        ['id' => $this->user->id, 'hash' => sha1($this->user->email)]
     );
 
-    $this->actingAs($user)->get($verificationUrl);
+    $response = $this
+        ->actingAs($this->user)
+        ->get($verificationUrl);
 
-    expect($user->fresh()->hasVerifiedEmail())->toBeFalse();
+    expect($this->user->refresh()->hasVerifiedEmail())->toBeTrue();
+
+    $response->assertStatus(201);
+});
+
+test('Пользователь не может верифицировать email из-за неправильного хеша', function () {
+    $verificationUrl = URL::temporarySignedRoute(
+        'verification.verify',
+        now()->addMinutes(60),
+        ['id' => $this->user->id, 'hash' => sha1('wrong-email')]
+    );
+
+    $response = $this->actingAs($this->user)->get($verificationUrl);
+
+    $response->assertStatus(406);
+
+    expect($this->user->fresh()->hasVerifiedEmail())->toBeFalse();
 });

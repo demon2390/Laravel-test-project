@@ -4,7 +4,6 @@ declare(strict_types = 1);
 
 namespace App\Observers;
 
-use App\Enums\CacheKeys;
 use App\Models\Service;
 use Illuminate\Support\Facades\Cache;
 
@@ -15,9 +14,9 @@ readonly class ServiceObserver
         $this->forgetServicesForUser($service->user_id);
     }
 
-    protected function forgetServicesForUser(string $id): void
+    protected function forgetServicesForUser(string $userId): void
     {
-        Cache::tags(CacheKeys::USER_SERVICES->value)->forget($id);
+        Cache::tags($userId)->clear();
     }
 
     public function updated(Service $service): void

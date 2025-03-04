@@ -16,7 +16,7 @@ class XRequestIdMiddleware
 
         $response->headers->set(
             key: 'X-Request-ID',
-            values: hexdec(uniqid())
+            values: (string) hexdec(uniqid())
         );
 
         return $response;

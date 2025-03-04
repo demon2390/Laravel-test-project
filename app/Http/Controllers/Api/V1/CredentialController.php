@@ -9,27 +9,27 @@ use Illuminate\Http\Request;
 
 class CredentialController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): void
     {
         // todo Credential index controller with observer, cache and resource
     }
 
-    public function store(Request $request)
+    public function store(Request $request): void
     {
         // todo Credential store controller with observer, cache and resource
     }
 
-    public function show(Request $request)
+    public function show(Request $request): void
     {
         // todo Credential show controller with observer, cache and resource
     }
 
-    public function update(Request $request)
+    public function update(Request $request): void
     {
         // todo Credential update controller with observer, cache and resource
     }
 
-    public function delete(Request $request)
+    public function delete(Request $request): void
     {
         // todo Credential delete controller with observer, cache and resource
     }

@@ -11,6 +11,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /** @property CarbonInterface $resource */
 class DateResource extends JsonResource
 {
+    /** @return array<string,float|int|string> */
     public function toArray(Request $request): array
     {
         return [
