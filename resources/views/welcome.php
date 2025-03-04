@@ -37,6 +37,11 @@
                             MailHog
                         </a>
                     </li>
+                    <li>
+                        <a class="icon-link mb-1" href="<?php echo $base_url; ?>/api/documentation" rel="noopener" target="_blank">
+                            Swagger
+                        </a>
+                    </li>
                 </ul>
             </div>
 

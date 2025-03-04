@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Auth;
 
-use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\JsonResponse;
@@ -12,10 +11,41 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
+use OpenApi\Annotations as OA;
 use Symfony\Component\HttpFoundation\Response;
 
-final class RegisteredUserController extends Controller
+final class RegisteredUserController
 {
+    /**
+     * @OA\Post(
+     *     path="/register",
+     *     tags={"Users"},
+     *     summary="Регистрация пользователя",
+     *     description="Добавление пользователя в систему с последующей отправкой почты с Bearer токеном",
+     *
+     *     @OA\RequestBody(
+     *         required=true,
+     *
+     *         @OA\JsonContent(
+     *             required={"name","email","password","password_confirmation"},
+     *
+     *             @OA\Property(property="name", type="string", example="John Doe"),
+     *             @OA\Property(property="email", type="string", format="email", example="john@example.com"),
+     *             @OA\Property(property="password", type="string", example="password"),
+     *             @OA\Property(property="password_confirmation", type="string", example="password")
+     *         ),
+     *     ),
+     *
+     *     @OA\Response(
+     *         response=201,
+     *         description="User created successfully"
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation errors"
+     *     )
+     * )
+     */
     public function store(Request $request): JsonResponse
     {
         try {
