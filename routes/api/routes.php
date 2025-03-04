@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('headers')->group(static function (): void {
-    Route::get('/', static fn () => [
+    Route::get('/', static fn (): array => [
         'Laravel' => app()->version(),
     ])->middleware('sunset:'.now()->addYear());
 

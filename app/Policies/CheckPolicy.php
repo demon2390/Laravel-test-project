@@ -9,7 +9,7 @@ use App\Models\User;
 
 final class CheckPolicy
 {
-    public function viewAny(User $user): bool
+    public function viewAny(): bool
     {
         return true;
     }

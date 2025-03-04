@@ -16,13 +16,11 @@ final class ServiceResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $response = [
+        return [
             'id' => $this->resource->id,
             'name' => $this->resource->name,
             'url' => $this->resource->url,
             'created' => new DateResource($this->resource->created_at),
         ];
-
-        return $response;
     }
 }

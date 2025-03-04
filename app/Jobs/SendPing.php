@@ -74,7 +74,7 @@ final class SendPing implements ShouldQueue
                 'started_at' => $start,
                 'finished_at' => now(),
             ]), 3);
-        } catch (Throwable $e) {
+        } catch (Throwable) {
         }
     }
 }

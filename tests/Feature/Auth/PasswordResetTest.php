@@ -23,7 +23,7 @@ test('Пользователь может сбросить пароль', functi
 
     $this->post('/forgot-password', ['email' => $user->email]);
 
-    Notification::assertSentTo($user, ResetPassword::class, function (object $notification) use ($user) {
+    Notification::assertSentTo($user, ResetPassword::class, function (object $notification) use ($user): true {
         $response = $this->post('/reset-password', [
             'token' => $notification->token,
             'email' => $user->email,

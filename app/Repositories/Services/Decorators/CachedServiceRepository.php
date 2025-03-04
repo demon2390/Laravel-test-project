@@ -23,14 +23,14 @@ final readonly class CachedServiceRepository implements ServiceRepositoryInterfa
      */
     public function getAllUserServices(): CursorPaginator
     {
-        $key = ((string) Auth::id())
+        $key = Auth::id()
             .'_cursor-'.request()->string('cursor')->value()
             .'_include-'.request()->string('include')->value();
 
         return Cache::tags([CacheKeys::USER_SERVICES->value, Auth::id()])->remember(
             key: $key,
             ttl: config('cache.ttl.default'), // @phpstan-ignore-line
-            callback: fn () => $this->repository->getAllUserServices()
+            callback: fn (): CursorPaginator => $this->repository->getAllUserServices()
         );
     }
 
@@ -39,7 +39,7 @@ final readonly class CachedServiceRepository implements ServiceRepositoryInterfa
         return Cache::tags([CacheKeys::SERVICE->value, Auth::id()])->remember(
             key: $id,
             ttl: config('cache.ttl.default'), // @phpstan-ignore-line
-            callback: fn () => $this->repository->findService(id: $id)
+            callback: fn (): Service => $this->repository->findService(id: $id)
         );
     }
 }

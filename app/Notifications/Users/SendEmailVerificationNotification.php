@@ -25,7 +25,6 @@ final class SendEmailVerificationNotification extends VerifyEmail implements Sho
 
     public function toMail($notifiable): MailMessage
     {
-        /** @var User $notifiable */
         $verificationUrl = $this->verificationUrl($this->user);
 
         return (new MailMessage())

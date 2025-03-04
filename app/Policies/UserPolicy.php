@@ -8,7 +8,7 @@ use App\Models\User;
 
 final class UserPolicy
 {
-    public function viewAny(User $user): bool
+    public function viewAny(): bool
     {
         return false;
     }
@@ -18,7 +18,7 @@ final class UserPolicy
         return $user->id === $model->id;
     }
 
-    public function create(User $user): bool
+    public function create(): bool
     {
         return true;
     }

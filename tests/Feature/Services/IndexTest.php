@@ -6,7 +6,6 @@ use App\Models\Service;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Laravel\getJson;
 
 use Symfony\Component\HttpFoundation\Response;
 
@@ -28,10 +27,11 @@ beforeEach(function (): void {
     ];
 });
 
-test('Неавторизованный пользователь получает корректный статус код', static function (): void {
-    getJson(
-        uri: action('App\Http\Controllers\Api\V1\ServiceController@index')
-    )->assertStatus(Response::HTTP_UNAUTHORIZED);
+test('Неавторизованный пользователь получает корректный статус код', function (): void {
+    actingAs($this->user)
+        ->getJson(
+            uri: action('App\Http\Controllers\Api\V1\ServiceController@index')
+        )->assertStatus(Response::HTTP_UNAUTHORIZED);
 });
 
 test('Авторизованный пользователь получает корректный статус код', function (): void {
@@ -100,62 +100,8 @@ test('Ответ пагинирован', function (): void {
         ->assertJsonStructure($this->jsonStructureService);
 });
 
-todo('Пользователь может подключить в ответ связанные доп. данные', function (): void {
-    Service::factory()->for($this->user)->count(2)->create();
+todo('Пользователь может подключить в ответ связанные доп. данные');
 
-    actingAs($this->user)
-        ->withToken($this->user->token)
-        ->getJson(
-            uri: action('App\Http\Controllers\Api\V1\ServiceController@index', ['include' => 'checks'])
-        )
-        ->assertStatus(Response::HTTP_OK)
-        ->assertJsonStructure([
-            'data' => [
-                [
-                    'checks' => [],
-                ],
-            ],
-        ]);
-});
+todo('Пользователь может фильтровать свой запрос для получения специфического ответа');
 
-todo('Пользователь может фильтровать свой запрос для получения специфического ответа', function (): void {
-    Service::factory()->for($this->user)->create([
-        'name' => 'First Name',
-        'url' => 'http://someurl.test',
-    ]);
-    Service::factory()->for($this->user)->create([
-        'name' => 'Second Name',
-        'url' => 'http://another.someurl.test',
-    ]);
-
-    actingAs($this->user)
-        ->withToken($this->user->token)
-        ->getJson(
-            uri: action('App\Http\Controllers\Api\V1\ServiceController@index', ['filter[name]' => 'first'])
-        )
-        ->assertStatus(Response::HTTP_OK)
-        ->assertJsonCount(1, 'data')
-        ->assertJsonPath('data.0.attributes.name', 'First Name')
-        ->assertJsonPath('data.0.attributes.url', 'http://someurl.test');
-});
-
-todo('Пользователь может сортировать результат при передаче порядка сортировки', function (): void {
-    Service::factory()->for($this->user)->create([
-        'name' => 'First Name',
-        'url' => 'http://someurl.test',
-    ]);
-    Service::factory()->for($this->user)->create([
-        'name' => 'Second Name',
-        'url' => 'http://another.someurl.test',
-    ]);
-
-    actingAs($this->user)
-        ->withToken($this->user->token)
-        ->getJson(
-            uri: action('App\Http\Controllers\Api\V1\ServiceController@index', ['sort' => '-name'])
-        )
-        ->assertStatus(Response::HTTP_OK)
-        ->assertJsonCount(2, 'data')
-        ->assertJsonPath('data.0.attributes.name', 'Second Name')
-        ->assertJsonPath('data.1.attributes.name', 'First Name');
-});
+todo('Пользователь может сортировать результат при передаче порядка сортировки');

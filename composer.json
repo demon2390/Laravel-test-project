@@ -13,6 +13,7 @@
         "predis/predis": "^2.3"
     },
     "require-dev": {
+        "driftingly/rector-laravel": "^2.0",
         "fakerphp/faker": "^1.24.1",
         "friendsofphp/php-cs-fixer": "^3.70",
         "larastan/larastan": "^3.0",
@@ -20,7 +21,8 @@
         "nunomaduro/collision": "^8.6.1",
         "pestphp/pest": "^3.7.4",
         "pestphp/pest-plugin-laravel": "^3.1",
-        "phpstan/phpstan": "^2.1.5"
+        "phpstan/phpstan": "^2.1.5",
+        "rector/rector": "^2.0"
     },
     "autoload": {
         "psr-4": {
@@ -43,6 +45,12 @@
         ],
         "fixer": [
             "./vendor/bin/php-cs-fixer fix"
+        ],
+        "rector": [
+            "./vendor/bin/rector"
+        ],
+        "check_all": [
+            "@fixer", "@rector", "@stan", "@test"
         ]
     },
     "extra": {

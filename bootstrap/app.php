@@ -46,9 +46,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(static function (Exceptions $exceptions): void {
         $exceptions->dontReportDuplicates();
 
-        $exceptions->render(static fn (NotFoundHttpException $e, Request $request) => new MessageResponses('Resource not found', Response::HTTP_NOT_FOUND));
+        $exceptions->render(static fn (NotFoundHttpException $e, Request $request): MessageResponses => new MessageResponses('Resource not found', Response::HTTP_NOT_FOUND));
 
-        $exceptions->render(static fn (Throwable $e, Request $request) => new MessageResponses(
+        $exceptions->render(static fn (Throwable $e, Request $request): MessageResponses => new MessageResponses(
             $e->getMessage(),
             $e instanceof HttpExceptionInterface
                     ? $e->getStatusCode()
