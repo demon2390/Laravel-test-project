@@ -1,18 +1,16 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
 use Symfony\Component\HttpFoundation\Response;
 
-class LoggerMiddleware
+final class LoggerMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
@@ -20,20 +18,20 @@ class LoggerMiddleware
 
         $auth = $request->header('Authorization', $request->header('authorization'));
         $data = [
-            'path'    => $request->getPathInfo(),
-            'method'  => $request->getMethod(),
-            'ip'      => $request->ip(),
+            'path' => $request->getPathInfo(),
+            'method' => $request->getMethod(),
+            'ip' => $request->ip(),
             'headers' => [
-                'user-agent'    => $request->header('user-agent'),
-                'referer'       => $request->header('referer'),
-                'origin'        => $request->header('origin'),
-                'x-request-id'  => $request->header('X-Request-ID', $request->header('x-request-id', 'gen_' . hexdec(uniqid()))),
+                'user-agent' => $request->header('user-agent'),
+                'referer' => $request->header('referer'),
+                'origin' => $request->header('origin'),
+                'x-request-id' => $request->header('X-Request-ID', $request->header('x-request-id', 'gen_'.hexdec(uniqid()))),
                 'authorization' => $auth,
             ],
         ];
 
         // if you want to log all the request body
-        if (count($request->all()) > 0) {
+        if (\count($request->all()) > 0) {
             // keys to skip like password or any sensitive information
             $hiddenKeys = ['password'];
 
@@ -43,7 +41,7 @@ class LoggerMiddleware
         $data['response'] = $response->getContent();
 
         $log = new Logger('stack');
-        $path = "logs/" . now()->year . "/" . now()->month . "/" . now()->day . "/" . ($request->ip() ?: '') . ".log";
+        $path = 'logs/'.now()->year.'/'.now()->month.'/'.now()->day.'/'.($request->ip() ?: '').'.log';
         $log->pushHandler(new StreamHandler(storage_path($path)));
         $log->info('', $data);
 

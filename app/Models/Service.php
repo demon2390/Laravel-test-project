@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Models;
 
@@ -21,27 +21,31 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $name
  * @property string $url
  * @property string $user_id
- * @property null|CarbonInterface $created_at
- * @property null|CarbonInterface $updated_at
+ * @property CarbonInterface|null $created_at
+ * @property CarbonInterface|null $updated_at
  * @property User $user
  * @property Collection<int,Check> $checks
  */
 #[ObservedBy(classes: ServiceObserver::class)]
-class Service extends Model
+final class Service extends Model
 {
     /** @use HasFactory<ServiceFactory> */
     use HasFactory;
     use HasUlids;
     use SoftDeletes;
 
-    /** @var array<int,string> */
+    /**
+     * @var array<int,string>
+     */
     protected $fillable = [
         'name',
         'url',
         'user_id',
     ];
 
-    /** @return BelongsTo<User, $this> */
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(
@@ -50,7 +54,9 @@ class Service extends Model
         );
     }
 
-    /** @return HasMany<Check, $this> */
+    /**
+     * @return HasMany<Check, $this>
+     */
     public function checks(): HasMany
     {
         return $this->hasMany(

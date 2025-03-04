@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -8,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::create('reports', function (Blueprint $table) {
+        Schema::create('reports', static function (Blueprint $table): void {
             $table->ulid('id')->primary();
 
             $table->string('url');

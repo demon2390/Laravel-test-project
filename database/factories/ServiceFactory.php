@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Database\Factories;
 
@@ -9,17 +9,21 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
 
-class ServiceFactory extends Factory
+final class ServiceFactory extends Factory
 {
-    /** @var class-string<Model> */
+    /**
+     * @var class-string<Model>
+     */
     protected $model = Service::class;
 
-    /** @return array<string,mixed> */
+    /**
+     * @return array<string,mixed>
+     */
     public function definition(): array
     {
         return [
-            'name'    => $this->faker->company(),
-            'url'     => $this->faker->unique()->url(),
+            'name' => $this->faker->company(),
+            'url' => $this->faker->unique()->url(),
             'user_id' => User::factory(),
         ];
     }

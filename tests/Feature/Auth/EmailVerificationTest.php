@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Models\User;
 use App\Notifications\Users\SendEmailVerificationNotification;
 use Illuminate\Support\Facades\Notification;
@@ -11,21 +13,21 @@ beforeEach(function (): void {
     $email = 'testemail2@testemail2.testemail';
 
     $this->post('/register', [
-        'name'                  => 'Test User',
-        'email'                 => $email,
-        'password'              => 'password',
+        'name' => 'Test User',
+        'email' => $email,
+        'password' => 'password',
         'password_confirmation' => 'password',
     ]);
 
     $this->user = User::query()->firstWhere('email', $email);
 });
 
-test('Электронное письмо отправляется для подтверждения email', function () {
+test('Электронное письмо отправляется для подтверждения email', function (): void {
     Notification::assertSentTo($this->user, SendEmailVerificationNotification::class);
 });
 
-test('Пользователь может верифицировать email', function () {
-    expect(is_null($this->user->id))->toBeFalse();
+test('Пользователь может верифицировать email', function (): void {
+    expect($this->user->id === null)->toBeFalse();
 
     $verificationUrl = URL::temporarySignedRoute(
         'verification.verify',
@@ -42,7 +44,7 @@ test('Пользователь может верифицировать email', f
     $response->assertStatus(201);
 });
 
-test('Пользователь не может верифицировать email из-за неправильного хеша', function () {
+test('Пользователь не может верифицировать email из-за неправильного хеша', function (): void {
     $verificationUrl = URL::temporarySignedRoute(
         'verification.verify',
         now()->addMinutes(60),

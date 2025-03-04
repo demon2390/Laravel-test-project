@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace Database\Factories;
 
@@ -11,23 +11,27 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
 
-class CredentialFactory extends Factory
+final class CredentialFactory extends Factory
 {
     use HasUlids;
 
-    /** @var class-string<Model> */
+    /**
+     * @var class-string<Model>
+     */
     protected $model = Credential::class;
 
-    /** @return array<string,mixed> */
+    /**
+     * @return array<string,mixed>
+     */
     public function definition(): array
     {
         return [
-            'name'     => $this->faker->sentence(),
+            'name' => $this->faker->sentence(),
             'metadata' => [
-                'Authorization-Header' => ($this->faker->boolean() ? CredentialType::Basic_auth->value : CredentialType::Bearer_auth->value) . ' '
-                    . $this->faker->uuid(),
+                'Authorization-Header' => ($this->faker->boolean() ? CredentialType::Basic_auth->value : CredentialType::Bearer_auth->value).' '
+                    .$this->faker->uuid(),
             ],
-            'user_id'  => User::factory(),
+            'user_id' => User::factory(),
         ];
     }
 }

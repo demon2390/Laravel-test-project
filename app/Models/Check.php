@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Carbon\CarbonInterface;
@@ -18,28 +20,32 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $path
  * @property string $method
  * @property string $user_id
- * @property null|array<string,mixed> $body
- * @property null|array<string,mixed> $headers
- * @property null|array<string,mixed> $parameters
- * @property null|string $credential_id
+ * @property array<string,mixed>|null $body
+ * @property array<string,mixed>|null $headers
+ * @property array<string,mixed>|null $parameters
+ * @property string|null $credential_id
  * @property string $service_id
- * @property null|CarbonInterface $created_at
- * @property null|CarbonInterface $updated_at
- * @property null|Credential $credential
+ * @property CarbonInterface|null $created_at
+ * @property CarbonInterface|null $updated_at
+ * @property Credential|null $credential
  * @property Service $service
  * @property Collection<int,Report> $reports
  */
-class Check extends Model
+final class Check extends Model
 {
     /** @use HasFactory<CheckFactory> */
     use HasFactory;
     use HasUlids;
     use SoftDeletes;
 
-    /** @var class-string<Model> */
-    protected string $model = Check::class;
+    /**
+     * @var class-string<Model>
+     */
+    protected string $model = self::class;
 
-    /** @var array<int,string> */
+    /**
+     * @var array<int,string>
+     */
     protected $fillable = [
         'name',
         'path',
@@ -51,7 +57,9 @@ class Check extends Model
         'service_id',
     ];
 
-    /** @return BelongsTo<Credential, $this> */
+    /**
+     * @return BelongsTo<Credential, $this>
+     */
     public function credential(): BelongsTo
     {
         return $this->belongsTo(
@@ -60,7 +68,9 @@ class Check extends Model
         );
     }
 
-    /** @return BelongsTo<Service, $this> */
+    /**
+     * @return BelongsTo<Service, $this>
+     */
     public function service(): BelongsTo
     {
         return $this->belongsTo(
@@ -69,7 +79,9 @@ class Check extends Model
         );
     }
 
-    /** @return HasMany<Report, $this> */
+    /**
+     * @return HasMany<Report, $this>
+     */
     public function reports(): HasMany
     {
         return $this->hasMany(
@@ -78,12 +90,14 @@ class Check extends Model
         );
     }
 
-    /** @return array<string,string|class-string> */
+    /**
+     * @return array<string,class-string|string>
+     */
     protected function casts(): array
     {
         return [
-            'body'       => 'json',
-            'headers'    => 'array',
+            'body' => 'json',
+            'headers' => 'array',
             'parameters' => 'array',
         ];
     }

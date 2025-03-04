@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Carbon\CarbonInterface;
@@ -17,26 +19,30 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $name
  * @property array<string,mixed> $metadata
  * @property string $user_id
- * @property null|CarbonInterface $created_at
- * @property null|CarbonInterface $updated_at
+ * @property CarbonInterface|null $created_at
+ * @property CarbonInterface|null $updated_at
  * @property User $user
  * @property Collection<int,Check> $checks
  */
-class Credential extends Model
+final class Credential extends Model
 {
     /** @use HasFactory<CredentialFactory> */
     use HasFactory;
     use HasUlids;
     use SoftDeletes;
 
-    /** @var array<int,string> */
+    /**
+     * @var array<int,string>
+     */
     protected $fillable = [
         'name',
         'metadata',
         'user_id',
     ];
 
-    /** @return BelongsTo<User, $this> */
+    /**
+     * @return BelongsTo<User, $this>
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(
@@ -45,7 +51,9 @@ class Credential extends Model
         );
     }
 
-    /** @return HasMany<Check, $this> */
+    /**
+     * @return HasMany<Check, $this>
+     */
     public function checks(): HasMany
     {
         return $this->hasMany(
@@ -54,7 +62,9 @@ class Credential extends Model
         );
     }
 
-    /** @return array<string,string|class-string> */
+    /**
+     * @return array<string,class-string|string>
+     */
     protected function casts(): array
     {
         return [

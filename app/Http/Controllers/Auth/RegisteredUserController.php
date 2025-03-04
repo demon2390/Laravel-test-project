@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -12,14 +14,14 @@ use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
-class RegisteredUserController extends Controller
+final class RegisteredUserController extends Controller
 {
     public function store(Request $request): JsonResponse
     {
         try {
             $request->validate([
-                'name'     => ['required', 'string', 'max:255'],
-                'email'    => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
                 'password' => ['required', 'confirmed', Rules\Password::defaults()],
             ]);
         } catch (ValidationException $e) {
@@ -27,9 +29,9 @@ class RegisteredUserController extends Controller
         }
 
         $user = User::query()->create([
-            'name'     => $request->string('name')->trim(),
-            'email'    => $request->string('email')->trim(),
-            'password' => Hash::make($request->string('password')->trim()),
+            'name' => $request->string('name')->trim(),
+            'email' => $request->string('email')->trim(),
+            'password' => Hash::make($request->string('password')->trim()->value()),
         ]);
 
         event(new Registered($user));

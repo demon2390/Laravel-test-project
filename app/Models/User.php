@@ -1,8 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
-//use Illuminate\Contracts\Auth\MustVerifyEmail;
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Carbon\CarbonInterface;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Collection;
@@ -20,23 +22,25 @@ use Laravel\Sanctum\HasApiTokens;
  * @property string $email
  * @property string $password
  * @property string $remember_token
- * @property null|CarbonInterface $email_verified_at
- * @property null|CarbonInterface $created_at
- * @property null|CarbonInterface $updated_at
+ * @property CarbonInterface|null $email_verified_at
+ * @property CarbonInterface|null $created_at
+ * @property CarbonInterface|null $updated_at
  * @property Collection<int,Service> $services
  * @property Collection<int,Credential> $credentials
  */
-class User extends Authenticatable
+final class User extends Authenticatable
 {
     use HasApiTokens;
 
     /** @use HasFactory<UserFactory> */
     use HasFactory;
-    use Notifiable;
     use HasUlids;
+    use Notifiable;
     use SoftDeletes;
 
-    /** @var array<int,string> */
+    /**
+     * @var array<int,string>
+     */
     protected $fillable = [
         'name',
         'email',
@@ -45,13 +49,17 @@ class User extends Authenticatable
         'email_verified_at',
     ];
 
-    /** @var array<int,string> */
+    /**
+     * @var array<int,string>
+     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /** @return HasMany<Service, $this> */
+    /**
+     * @return HasMany<Service, $this>
+     */
     public function services(): HasMany
     {
         return $this->hasMany(
@@ -60,7 +68,9 @@ class User extends Authenticatable
         );
     }
 
-    /** @return HasMany<Credential, $this> */
+    /**
+     * @return HasMany<Credential, $this>
+     */
     public function credentials(): HasMany
     {
         return $this->hasMany(
@@ -69,12 +79,14 @@ class User extends Authenticatable
         );
     }
 
-    /** @return array<string,string> */
+    /**
+     * @return array<string,string>
+     */
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
-            'password'          => 'hashed',
+            'password' => 'hashed',
         ];
     }
 }

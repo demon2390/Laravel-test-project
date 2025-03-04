@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -9,7 +11,7 @@ use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
-class VerifyEmailController extends Controller
+final class VerifyEmailController extends Controller
 {
     /**
      * Mark the authenticated user's email address as verified.
@@ -19,7 +21,7 @@ class VerifyEmailController extends Controller
         /** @var User $user */
         $user = User::query()->findOrFail($request->route('id'));
 
-        if (! hash_equals(sha1($user->getEmailForVerification()), $request->route('hash'))) { // @phpstan-ignore-line
+        if (!hash_equals(sha1($user->getEmailForVerification()), $request->route('hash'))) { // @phpstan-ignore-line
             return response()->json([
                 'message' => 'Verification failed',
             ], Response::HTTP_NOT_ACCEPTABLE);

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Jobs\Services;
 
@@ -10,15 +10,16 @@ use Illuminate\Database\DatabaseManager;
 use Illuminate\Foundation\Queue\Queueable;
 use Throwable;
 
-class CreateServiceJob implements ShouldQueue
+final class CreateServiceJob implements ShouldQueue
 {
     use Queueable;
 
-    /** @param  array<string|mixed>  $data */
+    /**
+     * @param array<mixed|string> $data
+     */
     public function __construct(
         public readonly array $data
-    ) {
-    }
+    ) {}
 
     /**
      * @throws Throwable
@@ -26,7 +27,7 @@ class CreateServiceJob implements ShouldQueue
     public function handle(DatabaseManager $databaseManager): void
     {
         $databaseManager->transaction(
-            callback: fn() => Service::query()->create(
+            callback: fn () => Service::query()->create(
                 attributes: $this->data
             ),
             attempts: 3

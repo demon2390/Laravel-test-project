@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\Facades\Notification;
 
-test('Ссылка доступна и отправляет письмо', function () {
+test('Ссылка доступна и отправляет письмо', function (): void {
     Notification::fake();
 
     $user = User::query()->first();
@@ -14,7 +16,7 @@ test('Ссылка доступна и отправляет письмо', funct
     Notification::assertSentTo($user, ResetPassword::class);
 });
 
-test('Пользователь может сбросить пароль', function () {
+test('Пользователь может сбросить пароль', function (): void {
     Notification::fake();
 
     $user = User::query()->first();

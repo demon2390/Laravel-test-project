@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Repositories\Services;
 
@@ -11,9 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 final readonly class ServiceRepository implements ServiceRepositoryInterface
 {
-    public function __construct(private Service $model)
-    {
-    }
+    public function __construct(private Service $model) {}
 
     public function getAllUserServices(): CursorPaginator
     {

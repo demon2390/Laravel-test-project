@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Http\Middleware\ApiHeadersMiddleware;
 use App\Http\Middleware\AuthenticateMiddleware;
 use App\Http\Middleware\EnsureEmailIsVerified;
@@ -18,12 +20,12 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__ . '/../routes/web/routes.php',
-        api: __DIR__ . '/../routes/api/routes.php',
-        commands: __DIR__ . '/../routes/console/routes.php',
+        web: __DIR__.'/../routes/web/routes.php',
+        api: __DIR__.'/../routes/api/routes.php',
+        commands: __DIR__.'/../routes/console/routes.php',
         health: '/up',
     )
-    ->withMiddleware(function (Middleware $middleware) {
+    ->withMiddleware(static function (Middleware $middleware): void {
         $middleware->statefulApi();
         $middleware->throttleWithRedis();
         $middleware->validateCsrfTokens(['*']);
@@ -35,26 +37,22 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->alias([
-            'sunset'   => SunsetMiddleware::class,
+            'sunset' => SunsetMiddleware::class,
             'verified' => EnsureEmailIsVerified::class,
-            'auth'     => AuthenticateMiddleware::class,
-            'headers'  => ApiHeadersMiddleware::class,
+            'auth' => AuthenticateMiddleware::class,
+            'headers' => ApiHeadersMiddleware::class,
         ]);
     })
-    ->withExceptions(function (Exceptions $exceptions) {
+    ->withExceptions(static function (Exceptions $exceptions): void {
         $exceptions->dontReportDuplicates();
 
-        $exceptions->render(function (NotFoundHttpException $e, Request $request) {
-            return new MessageResponses('Resource not found', Response::HTTP_NOT_FOUND);
-        });
+        $exceptions->render(static fn (NotFoundHttpException $e, Request $request) => new MessageResponses('Resource not found', Response::HTTP_NOT_FOUND));
 
-        $exceptions->render(function (Throwable $e, Request $request) {
-            return new MessageResponses(
-                $e->getMessage(),
-                $e instanceof HttpExceptionInterface
+        $exceptions->render(static fn (Throwable $e, Request $request) => new MessageResponses(
+            $e->getMessage(),
+            $e instanceof HttpExceptionInterface
                     ? $e->getStatusCode()
                     : Response::HTTP_INTERNAL_SERVER_ERROR
-            );
-        });
+        ));
     })
     ->create();

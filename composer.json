@@ -14,6 +14,7 @@
     },
     "require-dev": {
         "fakerphp/faker": "^1.24.1",
+        "friendsofphp/php-cs-fixer": "^3.70",
         "larastan/larastan": "^3.0",
         "mockery/mockery": "^1.6.12",
         "nunomaduro/collision": "^8.6.1",
@@ -39,6 +40,9 @@
         ],
         "test": [
             "@php artisan test --compact"
+        ],
+        "fixer": [
+            "./vendor/bin/php-cs-fixer fix"
         ]
     },
     "extra": {

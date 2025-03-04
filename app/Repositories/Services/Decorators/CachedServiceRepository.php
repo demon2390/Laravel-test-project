@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Repositories\Services\Decorators;
 
@@ -16,22 +16,22 @@ final readonly class CachedServiceRepository implements ServiceRepositoryInterfa
 {
     public function __construct(
         protected ServiceRepository $repository,
-    ) {
-    }
+    ) {}
 
-    /** @return CursorPaginator<int, Service> */
+    /**
+     * @return CursorPaginator<int, Service>
+     */
     public function getAllUserServices(): CursorPaginator
     {
         $key = ((string) Auth::id())
-            . '_cursor-' . request()->string('cursor')->value()
-            . '_include-' . request()->string('include')->value();
+            .'_cursor-'.request()->string('cursor')->value()
+            .'_include-'.request()->string('include')->value();
 
         return Cache::tags([CacheKeys::USER_SERVICES->value, Auth::id()])->remember(
             key: $key,
             ttl: config('cache.ttl.default'), // @phpstan-ignore-line
-            callback: function () {
-                return $this->repository->getAllUserServices();
-            });
+            callback: fn () => $this->repository->getAllUserServices()
+        );
     }
 
     public function findService(string $id): Service
@@ -39,8 +39,7 @@ final readonly class CachedServiceRepository implements ServiceRepositoryInterfa
         return Cache::tags([CacheKeys::SERVICE->value, Auth::id()])->remember(
             key: $id,
             ttl: config('cache.ttl.default'), // @phpstan-ignore-line
-            callback: function () use ($id) {
-                return $this->repository->findService(id: $id);
-            });
+            callback: fn () => $this->repository->findService(id: $id)
+        );
     }
 }

@@ -1,19 +1,21 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 use App\Models\Service;
 use App\Models\User;
-use Symfony\Component\HttpFoundation\Response;
+
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\getJson;
+
+use Symfony\Component\HttpFoundation\Response;
 
 beforeEach(function (): void {
     $this->user = User::factory()->create();
     $this->user->token = $this->user->createToken('api-token')->plainTextToken;
 
     $this->jsonStructureService = [
-        'data'  => [
+        'data' => [
             [
                 'id',
                 'name',
@@ -22,11 +24,11 @@ beforeEach(function (): void {
             ],
         ],
         'links' => ['first', 'last', 'prev', 'next'],
-        'meta'  => ['path', 'per_page', 'next_cursor', 'prev_cursor'],
+        'meta' => ['path', 'per_page', 'next_cursor', 'prev_cursor'],
     ];
 });
 
-test('Неавторизованный пользователь получает корректный статус код', function (): void {
+test('Неавторизованный пользователь получает корректный статус код', static function (): void {
     getJson(
         uri: action('App\Http\Controllers\Api\V1\ServiceController@index')
     )->assertStatus(Response::HTTP_UNAUTHORIZED);
@@ -40,27 +42,27 @@ test('Авторизованный пользователь получает к�
         )->assertStatus(Response::HTTP_OK);
 });
 
-test('Авторизованный пользователь не может создать новый сервис из-за некорректного URL', function () {
+test('Авторизованный пользователь не может создать новый сервис из-за некорректного URL', function (): void {
     actingAs($this->user)
         ->withToken($this->user->token)
         ->post('api/v1/services', [
             'name' => 'Test service name',
-            'url'  => 'example.domain.test',
+            'url' => 'example.domain.test',
         ])
         ->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
 });
 
-test('Авторизованный пользователь может создать новый сервис', function () {
+test('Авторизованный пользователь может создать новый сервис', function (): void {
     actingAs($this->user)
         ->withToken($this->user->token)
         ->post('api/v1/services', [
             'name' => 'Test service name',
-            'url'  => 'http://example.domain.test',
+            'url' => 'http://example.domain.test',
         ])
         ->assertStatus(Response::HTTP_ACCEPTED);
 });
 
-test('Авторизованный пользователь видит только свои данные', function () {
+test('Авторизованный пользователь видит только свои данные', function (): void {
     Service::factory()->for($this->user)->count(2)->create();
     Service::factory()->count(5)->create();
 
@@ -119,11 +121,11 @@ todo('Пользователь может подключить в ответ с�
 todo('Пользователь может фильтровать свой запрос для получения специфического ответа', function (): void {
     Service::factory()->for($this->user)->create([
         'name' => 'First Name',
-        'url'  => 'http://someurl.test',
+        'url' => 'http://someurl.test',
     ]);
     Service::factory()->for($this->user)->create([
         'name' => 'Second Name',
-        'url'  => 'http://another.someurl.test',
+        'url' => 'http://another.someurl.test',
     ]);
 
     actingAs($this->user)
@@ -140,11 +142,11 @@ todo('Пользователь может фильтровать свой зап
 todo('Пользователь может сортировать результат при передаче порядка сортировки', function (): void {
     Service::factory()->for($this->user)->create([
         'name' => 'First Name',
-        'url'  => 'http://someurl.test',
+        'url' => 'http://someurl.test',
     ]);
     Service::factory()->for($this->user)->create([
         'name' => 'Second Name',
-        'url'  => 'http://another.someurl.test',
+        'url' => 'http://another.someurl.test',
     ]);
 
     actingAs($this->user)

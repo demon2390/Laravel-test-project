@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Jobs;
 
@@ -10,18 +10,19 @@ use Illuminate\Database\DatabaseManager;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
+use JsonException;
+use Throwable;
 
-class SendPing implements ShouldQueue
+final class SendPing implements ShouldQueue
 {
     use Queueable;
 
     public function __construct(
         public readonly Check $check
-    ) {
-    }
+    ) {}
 
     /**
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function handle(DatabaseManager $database): void
     {
@@ -56,7 +57,6 @@ class SendPing implements ShouldQueue
                 ]
             );
 
-
             $stats = $response->transferStats;
             if ($stats) {
                 $stats = $stats->getHandlerStats();
@@ -66,15 +66,15 @@ class SendPing implements ShouldQueue
                 $httpCode = Arr::pull($stats, 'http_code');
             }
 
-            $database->transaction(fn() => $this->check->reports()->create([
-                'url'          => $url ?? null,
+            $database->transaction(fn () => $this->check->reports()->create([
+                'url' => $url ?? null,
                 'content_type' => $contentType ?? null,
-                'http_code'    => $httpCode ?? null,
-                'data'         => $stats,
-                'started_at'   => $start,
-                'finished_at'  => now(),
+                'http_code' => $httpCode ?? null,
+                'data' => $stats,
+                'started_at' => $start,
+                'finished_at' => now(),
             ]), 3);
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
         }
     }
 }

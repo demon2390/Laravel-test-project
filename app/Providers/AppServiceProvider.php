@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Providers;
 
 use App\Repositories\Services\Decorators\CachedServiceRepository;
@@ -7,7 +9,7 @@ use App\Repositories\Services\Interfaces\ServiceRepositoryInterface;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Support\ServiceProvider;
 
-class AppServiceProvider extends ServiceProvider
+final class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
@@ -17,8 +19,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         ResetPassword::createUrlUsing(static function (object $notifiable, string $token) { // @phpstan-ignore-line
-//            return config('app.frontend_url')."/password-reset/$token?email={$notifiable->getEmailForPasswordReset()}";
-            return config('app.url') . "/password-reset/$token?email={$notifiable->getEmailForPasswordReset()}"; // @phpstan-ignore-line
+            //            return config('app.frontend_url')."/password-reset/$token?email={$notifiable->getEmailForPasswordReset()}";
+            return config('app.url')."/password-reset/{$token}?email={$notifiable->getEmailForPasswordReset()}"; // @phpstan-ignore-line
         });
     }
 }

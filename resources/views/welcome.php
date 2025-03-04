@@ -21,19 +21,19 @@
                 <p>Ниже находятся ссылки на подключенные GUI</p>
                 <ul class="list-unstyled ps-0">
                     <li>
-                        <a class="icon-link mb-1" href="<?= $base_url ?>:8090" rel="noopener" target="_blank">
+                        <a class="icon-link mb-1" href="<?php echo $base_url; ?>:8090" rel="noopener" target="_blank">
                             Pgadmin
                         </a>
                         LP: admin@email.example / secret
                     </li>
                     <li>
-                        <a class="icon-link mb-1" href="<?= $base_url ?>:5540" rel="noopener" target="_blank">
+                        <a class="icon-link mb-1" href="<?php echo $base_url; ?>:5540" rel="noopener" target="_blank">
                             RedisInsight
                         </a>
                         Redis:6379
                     </li>
                     <li>
-                        <a class="icon-link mb-1" href="<?= $base_url ?>:8100" rel="noopener" target="_blank">
+                        <a class="icon-link mb-1" href="<?php echo $base_url; ?>:8100" rel="noopener" target="_blank">
                             MailHog
                         </a>
                     </li>

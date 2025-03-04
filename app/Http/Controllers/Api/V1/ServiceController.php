@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Http\Controllers\Api\V1;
 
@@ -8,7 +8,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\V1\ServiceFormRequest;
 use App\Http\Resources\Api\V1\ServiceResource;
 use App\Http\Responses\V1\MessageResponses;
-use App\Jobs\Services\{CreateServiceJob, DeleteServiceJob, UpdateServiceJob};
+use App\Jobs\Services\CreateServiceJob;
+use App\Jobs\Services\DeleteServiceJob;
+use App\Jobs\Services\UpdateServiceJob;
 use App\Models\Service;
 use App\Repositories\Services\Interfaces\ServiceRepositoryInterface;
 use Illuminate\Http\JsonResponse;
@@ -18,11 +20,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Symfony\Component\HttpFoundation\Response;
 
-class ServiceController extends Controller
+final class ServiceController extends Controller
 {
-    public function __construct(private readonly ServiceRepositoryInterface $repository)
-    {
-    }
+    public function __construct(private readonly ServiceRepositoryInterface $repository) {}
 
     public function index(Request $request): JsonResponse
     {
@@ -30,7 +30,7 @@ class ServiceController extends Controller
         $services = $this->repository->getAllUserServices();
 
         if ($services->isEmpty()) {
-            $services = new Collection;
+            $services = new Collection();
         }
 
         return ServiceResource::collection($services)->toResponse($request);

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Http\Requests\V1;
 
@@ -11,9 +11,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\Response;
 
-class ServiceFormRequest extends FormRequest
+final class ServiceFormRequest extends FormRequest
 {
-    /** @return array<string, array<int, mixed>> */
+    /**
+     * @return array<string, array<int, mixed>>
+     */
     public function rules(): array
     {
         return [
@@ -21,11 +23,11 @@ class ServiceFormRequest extends FormRequest
                 $this->route('service') ? 'sometimes' : null,
                 'required', 'string', 'min:2', 'max:255',
             ],
-            'url'  => [
+            'url' => [
                 $this->route('service') ? 'sometimes' : null,
                 'required', 'url', 'min:11', 'max:255',
                 Rule::unique('services')->where(
-                    fn(Builder $q) => $q
+                    fn (Builder $q) => $q
                         ->where('user_id', Auth::id())
                         ->where('url', $this->input('url'))
                         ->orHavingNotNull('deleted_at')
@@ -34,7 +36,9 @@ class ServiceFormRequest extends FormRequest
         ];
     }
 
-    /** @return array<string, string> */
+    /**
+     * @return array<string, string>
+     */
     public function messages(): array
     {
         return [
@@ -42,7 +46,7 @@ class ServiceFormRequest extends FormRequest
         ];
     }
 
-    protected function failedValidation(Validator $validator)
+    protected function failedValidation(Validator $validator): void
     {
         abort(
             Response::HTTP_UNPROCESSABLE_ENTITY,

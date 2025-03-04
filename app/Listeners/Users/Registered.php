@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Listeners\Users;
 
 use App\Models\User;
 use App\Notifications\Users\SendEmailVerificationNotification;
 
-class Registered
+final class Registered
 {
     public function handle(\Illuminate\Auth\Events\Registered $event): void
     {

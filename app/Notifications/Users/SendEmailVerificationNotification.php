@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Notifications\Users;
 
 use App\Models\User;
@@ -9,7 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Support\HtmlString;
 
-class SendEmailVerificationNotification extends VerifyEmail implements ShouldQueue
+final class SendEmailVerificationNotification extends VerifyEmail implements ShouldQueue
 {
     use Queueable;
 
@@ -18,7 +20,7 @@ class SendEmailVerificationNotification extends VerifyEmail implements ShouldQue
     public function __construct(
         private readonly User $user
     ) {
-        $this->token = $user->newToken ?? null;
+        $this->token = $user->newToken ?? null; // @phpstan-ignore-line
     }
 
     public function toMail($notifiable): MailMessage
@@ -26,7 +28,7 @@ class SendEmailVerificationNotification extends VerifyEmail implements ShouldQue
         /** @var User $notifiable */
         $verificationUrl = $this->verificationUrl($this->user);
 
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject('Verify Email Address')
             ->line(new HtmlString("Your Bearer API token is <br><b>Bearer {$this->token}<b>"))
             ->line('Please click the button below to verify your email address.')

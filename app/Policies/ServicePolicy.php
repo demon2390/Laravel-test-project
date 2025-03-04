@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Policies;
 
 use App\Models\Service;
 use App\Models\User;
 
-class ServicePolicy
+final class ServicePolicy
 {
     public function viewAny(?User $user): bool
     {

@@ -1,19 +1,23 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 namespace App\Providers;
 
-use App\Models\{Check, Credential, Service};
-use App\Policies\{CheckPolicy, CredentialPolicy, ServicePolicy};
+use App\Models\Check;
+use App\Models\Credential;
+use App\Models\Service;
+use App\Policies\CheckPolicy;
+use App\Policies\CredentialPolicy;
+use App\Policies\ServicePolicy;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 
-class PolicyServiceProvider extends ServiceProvider
+final class PolicyServiceProvider extends ServiceProvider
 {
     protected $policies = [
-        Service::class    => ServicePolicy::class,
+        Service::class => ServicePolicy::class,
         Credential::class => CredentialPolicy::class,
-        Check::class      => CheckPolicy::class,
+        Check::class => CheckPolicy::class,
     ];
 
     public function boot(): void

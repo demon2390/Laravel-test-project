@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
@@ -9,7 +9,7 @@ use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', fn() => view('welcome', ['base_url' => env('APP_URL', '/')]));
+Route::get('/', static fn () => view('welcome', ['base_url' => env('APP_URL', '/')]));
 
 Route::middleware('headers')->group(static function (): void {
     Route::post('/register', [RegisteredUserController::class, 'store'])
@@ -29,12 +29,10 @@ Route::middleware('headers')->group(static function (): void {
         ->name('password.store');
 });
 
-Route::get('/password-reset/{token}', static function (Request $request) {
-    return view('reset-password', [
-        'token' => $request->route('token'),
-        'email' => $request->query('email'),
-    ]);
-})
+Route::get('/password-reset/{token}', static fn (Request $request) => view('reset-password', [
+    'token' => $request->route('token'),
+    'email' => $request->query('email'),
+]))
     ->middleware(['throttle:api'])
     ->name('password.reset');
 

@@ -12,8 +12,8 @@
         </div>
         <div class="card-body">
             <form name="add-blog-post-form" id="add-blog-post-form" method="post" action="/reset-password">
-                <input type="text" hidden="hidden" name="token" value="<?= $token ?>">
-                <input type="text" hidden="hidden" name="email" value="<?= $email ?>">
+                <input type="text" hidden="hidden" name="token" value="<?php echo $token; ?>">
+                <input type="text" hidden="hidden" name="email" value="<?php echo $email; ?>">
                 <div class="form-group">
                     <label for="exampleInputEmail1">New password</label>
                     <input type="password" name="password" class="form-control" required="required">

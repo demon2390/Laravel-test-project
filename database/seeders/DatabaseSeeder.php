@@ -1,22 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Models\Check;
 use App\Models\Report;
 use App\Models\Service;
 use App\Models\User;
-
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Database\Seeder;
 
-class DatabaseSeeder extends Seeder
+final class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
         $user = User::factory()
             ->create([
-                'name'  => 'Test User',
+                'name' => 'Test User',
                 'email' => 'example@email.test',
             ]);
 
@@ -26,22 +27,22 @@ class DatabaseSeeder extends Seeder
             ->for($user)
             ->create([
                 'name' => 'Localhost',
-                'url'  => 'http://localhost/',
+                'url' => 'http://localhost/',
             ]);
 
         $service = Service::factory()
             ->for($user)
             ->create([
                 'name' => 'Test Service',
-                'url'  => 'https://google.com/',
+                'url' => 'https://google.com/',
             ]);
 
         Check::factory()
             ->for($service)
             ->create([
-                'name'    => 'Google main page',
-                'path'    => '/',
-                'method'  => 'get',
+                'name' => 'Google main page',
+                'path' => '/',
+                'method' => 'get',
                 'headers' => [
                     'User-Agent' => 'Laravel Portfolio',
                 ],

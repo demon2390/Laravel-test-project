@@ -1,7 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
+use App\Providers\AppServiceProvider;
+use App\Providers\PolicyServiceProvider;
+use App\Providers\RateLimitServiceProvider;
+
 return [
-    App\Providers\AppServiceProvider::class,
-    App\Providers\PolicyServiceProvider::class,
-    App\Providers\RateLimitServiceProvider::class,
+    AppServiceProvider::class,
+    PolicyServiceProvider::class,
+    RateLimitServiceProvider::class,
 ];
