@@ -62,7 +62,7 @@ use OpenApi\Annotations as OA;
  *     @OA\Response(response=404, description="Not Found", @OA\JsonContent(ref="#/components/schemas/NotFoundError")),
  * )
  *
- * @OA\Put(
+ * @OA\Patch(
  *     path="/api/v1/services/{id}",
  *     security={{"bearerAuth":{}}},
  *     tags={"Services"},
@@ -71,6 +71,7 @@ use OpenApi\Annotations as OA;
  *
  *     @OA\HeaderParameter(required=true, in="header",name="Authorization", @OA\Schema(type="string", format="bearer")),
  *
+ *     @OA\Parameter(name="id", description="Service ID", required=true, in="path", @OA\Schema(type="string")),
  *     @OA\RequestBody(required=true,@OA\JsonContent(ref="#/components/schemas/StoreRequestService")),
  *
  *     @OA\Response(response=200, description="Ok", @OA\JsonContent(ref="#/components/schemas/seviceResource")),
@@ -87,6 +88,7 @@ use OpenApi\Annotations as OA;
  *     description="Удаление добавленного пользовательского сервиса",
  *
  *     @OA\HeaderParameter(required=true, in="header",name="Authorization", @OA\Schema(type="string", format="bearer")),
+ *     @OA\Parameter(name="id", description="Service ID", required=true, in="path", @OA\Schema(type="string")),
  *
  *     @OA\Response(response=202, description="Ok", @OA\JsonContent(ref="#/components/schemas/Accepted")),
  *     @OA\Response(response=401, description="Unauthenticated", @OA\JsonContent(ref="#/components/schemas/UnauthenticatedError")),
